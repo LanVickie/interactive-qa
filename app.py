@@ -18,9 +18,10 @@ def generate_response(uploaded_file, openai_api_key, query_text):
         texts = text_splitter.create_documents(documents)
         # Select embeddings
         embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+        chromadb.api.client.SharedSystemClient.clear_system_cache()
         # Create a vectorstore from documents
         db = Chroma.from_documents(texts, embeddings)
-        chromadb.api.client.SharedSystemClient.clear_system_cache()
+        # chromadb.api.client.SharedSystemClient.clear_system_cache()
         # Create retriever interface
         retriever = db.as_retriever()
         # Create QA chain
