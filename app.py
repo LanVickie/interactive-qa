@@ -44,6 +44,7 @@ with st.form('myform', clear_on_submit=True):
     if submitted and openai_api_key.startswith('sk-'):
         with st.spinner('Calculating...'):
             response = generate_response(uploaded_file, openai_api_key, query_text)
+            chromadb.api.client.SharedSystemClient.clear_system_cache()
             result.append(response)
             del openai_api_key
 
