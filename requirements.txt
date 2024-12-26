@@ -5,3 +5,4 @@ chromadb==0.4.17
 tiktoken
 langchain_community
 pysqlite3-binary
+numpy<2
