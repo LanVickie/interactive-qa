@@ -1,13 +1,14 @@
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 import streamlit as st
 from langchain.llms import OpenAI
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
-import pysqlite3
-import sys
 import chromadb
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 def generate_response(uploaded_file, openai_api_key, query_text,url_api_base):
     # Load document if file is uploaded
