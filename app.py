@@ -11,8 +11,6 @@ from langchain.chains import RetrievalQA
 from langchain.document_loaders import PyPDFLoader, WebBaseLoader
 import tempfile
 
-# Fix the sqlite3 module issue
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 # Page configuration (must be the first Streamlit command)
 st.set_page_config(page_title='🦜🔗 Enhanced Ask the Doc App')
