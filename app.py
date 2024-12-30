@@ -95,19 +95,17 @@ query_text = st.text_input(
 
 # Form input and query
 result = []
-openai_api_key = st.secrets["openai_secret"]
-openai_api_url = st.secrets["openai_api_url"]
 with st.form('query_form', clear_on_submit=True):
-    # openai_api_url = st.text_input(
-    #     'OpenAI API Base URL',
-    #     type='default',
-    #     disabled=not (documents and query_text)
-    # )
-    # openai_api_key = st.text_input(
-    #     'OpenAI API Key',
-    #     type='password',
-    #     disabled=not (documents and query_text)
-    # )
+    openai_api_url = st.text_input(
+        'OpenAI API Base URL',
+        type='default',
+        disabled=not (documents and query_text)
+    )
+    openai_api_key = st.text_input(
+        'OpenAI API Key',
+        type='password',
+        disabled=not (documents and query_text)
+    )
     submitted = st.form_submit_button(
         'Submit',
         disabled=not (documents and query_text)
@@ -116,8 +114,8 @@ with st.form('query_form', clear_on_submit=True):
         with st.spinner('Generating response...'):
             response = generate_response(documents, openai_api_url, openai_api_key, query_text)
             result.append(response)
-            # del openai_api_key
-            # del openai_api_url
+            del openai_api_key
+            del openai_api_url
 
 if len(result):
     st.info(response)
