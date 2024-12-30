@@ -111,10 +111,10 @@ with st.form('query_form', clear_on_submit=True):
         'Submit',
         disabled=not (documents and query_text)
     )
-    # if submitted and openai_api_key.startswith('sk-'):
+    # if submitted and openai_secret.startswith('sk-'):
     if submitted:
         with st.spinner('Generating response...'):
-            # response = generate_response(documents, openai_api_url, openai_api_key, query_text)
+            # response = generate_response(documents, openai_api_url, openai_secret, query_text)
             response = generate_response(documents, query_text)
             result.append(response)
             # del openai_api_key
