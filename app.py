@@ -1,4 +1,3 @@
-
 __import__('pysqlite3')
 import sys
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
@@ -45,21 +44,20 @@ def load_document(file=None, url=None):
         add_to_sidebar(url)
         return documents
 
-# def generate_response(documents, openai_api_url, openai_api_key, query_text):
-def generate_response(documents, query_text):
+def generate_response(documents, openai_api_url, openai_api_key, query_text):
     """Generate a response from the loaded documents."""
     # Split documents into chunks
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     texts = text_splitter.split_documents(documents)
     # Select embeddings
-    embeddings = OpenAIEmbeddings(openai_api_key=openai_secret,openai_api_base=openai_api_url)
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key,openai_api_base=openai_api_url)
     # Create a vectorstore from documents and use ChromaDB for persistence
     db = Chroma.from_documents(texts, embeddings, persist_directory="chromadb_storage")
     db.persist()  # Persist the embeddings to disk
     retriever = db.as_retriever()
     # Create QA chain
     qa = RetrievalQA.from_chain_type(
-        llm=OpenAI(openai_api_key=openai_secret, openai_api_base=openai_api_url),
+        llm=OpenAI(openai_api_key=openai_api_key, openai_api_base=openai_api_url),
         chain_type='stuff',
         retriever=retriever
     )
@@ -97,6 +95,8 @@ query_text = st.text_input(
 
 # Form input and query
 result = []
+openai_api_key = st.secrets["openai_secret"]
+openai_api_url = st.secrets["openai_api_url"]
 with st.form('query_form', clear_on_submit=True):
     # openai_api_url = st.text_input(
     #     'OpenAI API Base URL',
@@ -112,11 +112,9 @@ with st.form('query_form', clear_on_submit=True):
         'Submit',
         disabled=not (documents and query_text)
     )
-    # if submitted and openai_api_key.startswith('sk-'):
-    if submitted:
+    if submitted and openai_secret.startswith('sk-'):
         with st.spinner('Generating response...'):
-            # response = generate_response(documents, openai_api_url, openai_api_key, query_text)
-            response = generate_response(documents, query_text)
+            response = generate_response(documents, openai_api_url, openai_secret, query_text)
             result.append(response)
             # del openai_api_key
             # del openai_api_url
