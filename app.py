@@ -52,14 +52,14 @@ def generate_response(documents, query_text):
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     texts = text_splitter.split_documents(documents)
     # Select embeddings
-    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key,openai_api_base=openai_api_url)
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_secret,openai_api_base=openai_api_url)
     # Create a vectorstore from documents and use ChromaDB for persistence
     db = Chroma.from_documents(texts, embeddings, persist_directory="chromadb_storage")
     db.persist()  # Persist the embeddings to disk
     retriever = db.as_retriever()
     # Create QA chain
     qa = RetrievalQA.from_chain_type(
-        llm=OpenAI(openai_api_key=openai_api_key, openai_api_base=openai_api_url),
+        llm=OpenAI(openai_api_key=openai_secret, openai_api_base=openai_api_url),
         chain_type='stuff',
         retriever=retriever
     )
