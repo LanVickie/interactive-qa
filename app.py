@@ -1,7 +1,6 @@
 __import__('pysqlite3')
 import sys
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-
 import streamlit as st
 from langchain.llms import OpenAI
 from langchain.text_splitter import CharacterTextSplitter
@@ -10,7 +9,6 @@ from langchain_community.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from langchain.document_loaders import PyPDFLoader, WebBaseLoader
 import tempfile
-
 
 # Page configuration (must be the first Streamlit command)
 st.set_page_config(page_title='🦜🔗 Enhanced Ask the Doc App')
@@ -31,7 +29,6 @@ def load_document(file=None, url=None):
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
             temp_file.write(file.read())
             temp_file_path = temp_file.name
-        
         # Load a PDF document from the temporary file
         loader = PyPDFLoader(temp_file_path)
         documents = loader.load()
@@ -71,43 +68,28 @@ with st.sidebar:
             st.write(f"- {doc}")
     else:
         st.write("No documents loaded.")
-
 # Page title
 st.title('🦜🔗 Enhanced Ask the Doc App')
-
 # File or URL upload
 uploaded_file = st.file_uploader('Upload a PDF document', type='pdf')
 uploaded_url = st.text_input('Enter a website URL (optional)')
-
 # Load documents
 documents = []
 if uploaded_file:
     documents = load_document(file=uploaded_file)
 elif uploaded_url:
     documents = load_document(url=uploaded_url)
-
 # Query input
 query_text = st.text_input(
     'Enter your question:',
     placeholder='Ask something about the loaded documents.',
     disabled=not documents
 )
-
 # Form input and query
 result = []
 openai_api_key = st.secrets["openai_secret"]
 openai_api_url = st.secrets["openai_api_url"]
 with st.form('query_form', clear_on_submit=True):
-    # openai_api_url = st.text_input(
-    #     'OpenAI API Base URL',
-    #     type='default',
-    #     disabled=not (documents and query_text)
-    # )
-    # openai_api_key = st.text_input(
-    #     'OpenAI API Key',
-    #     type='password',
-    #     disabled=not (documents and query_text)
-    # )
     submitted = st.form_submit_button(
         'Submit',
         disabled=not (documents and query_text)
@@ -116,8 +98,5 @@ with st.form('query_form', clear_on_submit=True):
         with st.spinner('Generating response...'):
             response = generate_response(documents, openai_api_url, openai_api_key, query_text)
             result.append(response)
-            # del openai_api_key
-            # del openai_api_url
-
 if len(result):
     st.info(response)
